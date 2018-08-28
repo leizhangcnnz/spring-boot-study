@@ -2,6 +2,7 @@ package com.nzleyuan.persistance;
 
 import com.nzleyuan.persistance.com.nzleyuan.entity.GroupOrder;
 import com.nzleyuan.persistance.repositories.GroupOrderRepository;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -36,7 +37,11 @@ public class LyFrameworkApplication {
 	Optional<GroupOrder> getGroupOrder(long objid) {
 		return groupOrderRepository.findById(objid);
 	}
-	
+
+	@GetMapping(value = "getGroupOrders")
+	List<GroupOrder> getGroupOrders() {
+		return groupOrderRepository.findAll();
+	}
 	public static void main(String[] args) {
 		SpringApplication.run(LyFrameworkApplication.class, args);
 	}
