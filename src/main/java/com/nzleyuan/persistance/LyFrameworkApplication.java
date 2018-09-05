@@ -40,12 +40,6 @@ public class LyFrameworkApplication {
 		return groupOrderRepository.save(groupOrder);
 	}
 
-	@PostMapping(value = "saveProduct")
-	Product saveProduct(@RequestBody String payload) throws IOException {
-		Product product = (Product) JacksonUtils.convertJson2Object(payload, Product.class);
-		return productRepository.save(product);
-	}
-
 	@GetMapping(value = "getGroupOrder")
 	Optional<GroupOrder> getGroupOrder(long objid) {
 		return groupOrderRepository.findById(objid);
@@ -53,6 +47,18 @@ public class LyFrameworkApplication {
 	@GetMapping(value = "getGroupOrders")
 	List<GroupOrder> getGroupOrders() {
 		return groupOrderRepository.findAll();
+	}
+
+
+	@PostMapping(value = "saveProduct")
+	Product saveProduct(@RequestBody String payload) throws IOException {
+		Product product = (Product) JacksonUtils.convertJson2Object(payload, Product.class);
+		return productRepository.save(product);
+	}
+
+	@GetMapping(value = "getProducts")
+	List<Product> getProducts() {
+		return productRepository.findAll();
 	}
 
 	public static void main(String[] args) {
