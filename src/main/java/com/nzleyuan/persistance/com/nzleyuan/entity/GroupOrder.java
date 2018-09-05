@@ -1,9 +1,3 @@
-/*
- * Copyright 2018, Kiwiplan (NZ) Ltd
- * User: lei.zhang
- * Created on: 2018-08-28
- * Time: 13:59:00
- */
 package com.nzleyuan.persistance.com.nzleyuan.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -13,13 +7,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-/**
- * TODO Replace with suitable description of this class.
- * <p>
- * Copyright 2018, Kiwiplan (NZ) Ltd.
- *
- * @author lei.zhang
- */
 @Entity
 @Table(name = "grouporder")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})

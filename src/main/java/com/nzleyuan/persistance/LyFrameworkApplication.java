@@ -40,22 +40,22 @@ public class LyFrameworkApplication {
 		return groupOrderRepository.save(groupOrder);
 	}
 
+	@PostMapping(value = "saveProduct")
+	Product saveProduct(@RequestBody String payload) throws IOException {
+		Product product = (Product) JacksonUtils.convertJson2Object(payload, Product.class);
+		return productRepository.save(product);
+	}
+
 	@GetMapping(value = "getGroupOrder")
 	Optional<GroupOrder> getGroupOrder(long objid) {
 		return groupOrderRepository.findById(objid);
 	}
-
 	@GetMapping(value = "getGroupOrders")
 	List<GroupOrder> getGroupOrders() {
 		return groupOrderRepository.findAll();
 	}
+
 	public static void main(String[] args) {
 		SpringApplication.run(LyFrameworkApplication.class, args);
 	}
-
-	@PostMapping(value = "saveProduct")
-  Product saveProduct(@RequestBody String productJsonStr) throws IOException {
-	  Product product = (Product) JacksonUtils.convertJson2Object(productJsonStr, Product.class);
-    return productRepository.save(product);
-  }
 }
