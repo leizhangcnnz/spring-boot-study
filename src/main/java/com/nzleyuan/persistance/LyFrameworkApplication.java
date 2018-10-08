@@ -1,14 +1,20 @@
 package com.nzleyuan.persistance;
 
 import com.nzleyuan.persistance.com.nzleyuan.entity.GroupOrder;
+import com.nzleyuan.persistance.com.nzleyuan.entity.Photos;
 import com.nzleyuan.persistance.com.nzleyuan.entity.Product;
 import com.nzleyuan.persistance.repositories.GroupOrderRepository;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import com.nzleyuan.persistance.repositories.PhotosRepository;
 import com.nzleyuan.persistance.repositories.ProductRepository;
 import com.nzleyuan.persistance.utils.JacksonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +34,9 @@ public class LyFrameworkApplication {
 
 	@Autowired
   ProductRepository productRepository;
+
+	@Autowired
+  PhotosRepository photosRepository;
 	
 	@RequestMapping("/")
 	String greeting() {
@@ -67,24 +76,29 @@ public class LyFrameworkApplication {
 
 	@ResponseBody
 	@RequestMapping("uploadPicture")
-	public String uploadPicture(HttpServletRequest request, @RequestParam(value = "file", required = false) MultipartFile file) throws IOException {
+	public String uploadPicture(HttpServletRequest request, @RequestParam(value = "file", required = true) MultipartFile file) throws IOException {
 		request.setCharacterEncoding("UTF-8");
-		String user = request.getParameter("user");
+    long productId = Long.valueOf(request.getParameter("productId"));
+		short sequence = Short.valueOf(request.getParameter("sequence"));
 		if(!file.isEmpty()) {
 			file.getBytes();
 			String fileName = file.getOriginalFilename();
-			String path = null;
-			String type = null;
-			type = fileName != null && fileName.contains(".") ? fileName.substring(fileName.lastIndexOf(".") + 1, fileName.length()) : null;
+      SimpleDateFormat yyyyMMdd = new SimpleDateFormat("yyyy-MM-dd");
+			String type = fileName != null && fileName.contains(".") ? fileName.substring(fileName.lastIndexOf(".") + 1, fileName.length()) : null;
 			if (type != null) {
 				if ("GIF".equals(type.toUpperCase())||"PNG".equals(type.toUpperCase())||"JPG".equals(type.toUpperCase())) {
-					// 项目在容器中实际发布运行的根路径
-					String realPath = request.getSession().getServletContext().getRealPath("/");
 					// 自定义的文件名称
 					String trueFileName = String.valueOf(System.currentTimeMillis()) + fileName;
+					String dbPath = Paths.get(yyyyMMdd.format(new Date().getTime()), String.valueOf(productId)).toString();
+          Path path = Paths.get(System.getProperty("user.dir"), dbPath, trueFileName);
 					// 设置存放图片文件的路径
-					path = realPath + "/uploads/" + trueFileName;
-					file.transferTo(new File(path));
+          File newFile = path.toFile();
+          if (!newFile.getParentFile().exists()) {
+            newFile.getParentFile().mkdirs();
+          }
+					file.transferTo(newFile);
+          Photos photos = new Photos().setPath(dbPath).setReferenceId(productId).setSequence(sequence);
+          photosRepository.save(photos);
 				}else {
 					return "error";
 				}
